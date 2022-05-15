@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: capi-kind-c0
+spec:
+  destination:
+    name: ''
+    namespace: ''
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: mgmt
+    repoURL: 'https://github.com/ptx96/kappXcapi.git'
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values-c2.yaml
+  project: default
