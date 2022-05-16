@@ -1,5 +1,5 @@
 cluster:
   name: kind-0
   masterNodes: 1
-  workerNodes: 1
+  workerNodes: 3
   version: v1.21.1
