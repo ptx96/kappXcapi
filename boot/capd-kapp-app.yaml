@@ -1,0 +1,61 @@
+apiVersion: kappctrl.k14s.io/v1alpha1
+kind: App
+metadata:
+  name: capd-cluster-test
+spec:
+  syncPeriod: 5m
+  serviceAccountName: cluster-admin-sa
+  fetch:
+  - git:
+      url: https://github.com/ptx96/kappXcapi
+      ref: origin/master
+      subPath: mgmt
+  template:
+  - helmTemplate:
+      valuesFrom:
+      - secretRef:
+          name: capd-values
+  deploy:
+  - kapp: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: capd-values
+  namespace: default
+stringData:
+  data.yml: |
+    cluster:
+      name: kind-0
+      masterNodes: 1
+      workerNodes: 2
+      version: v1.21.1
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-admin-sa
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cluster-admin-cluster-role
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cluster-admin-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: cluster-admin-sa
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin-cluster-role
+
